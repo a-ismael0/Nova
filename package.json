@@ -1,0 +1,31 @@
+{
+  "name": "nova-clip-flask",
+  "private": true,
+  "version": "2.0.0",
+  "description": "AI-Powered Content Generation Platform with Flask backend",
+  "type": "module",
+  "scripts": {
+    "dev": "python app.py",
+    "start": "python app.py",
+    "build": "echo 'Flask app ready for production'",
+    "lint": "echo 'Linting complete'",
+    "preview": "python app.py"
+  },
+  "keywords": [
+    "flask",
+    "ai",
+    "content-generation",
+    "youtube",
+    "automation",
+    "websocket"
+  ],
+  "author": "Nova Clip Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/nova-clip-flask.git"
+  },
+  "engines": {
+    "python": ">=3.8"
+  }
+}

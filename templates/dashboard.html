@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Clip - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='progress-bar_style.css') }}" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='NC_ico.ico') }}" type="image/x-icon">
+</head>
+<body class="dashboard-container">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" width="32" height="32" class="me-2"> Nova Clip </a>
+                <div class="navbar-nav d-flex flex-row gap-3">
+                    <span class="nav-link">Welcome, {{ username }}</span>
+                    <a class="nav-link" href="#" onclick="navigateToResults(event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10,9 9,9 8,9"></polyline>
+                        </svg>
+                        Results
+                    </a>
+                    <a class="nav-link" href="#" onclick="handleLogout(event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16,17 21,12 16,7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+        <div class="container">
+            <div class="row">
+                <!-- Left Column - Control Panel -->
+                <div class="col-lg-6">
+                    <div class="control-panel">
+                        <h2 class="panel-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            Control Panel
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="geoRegion" class="form-label">Select Region/Country</label>
+                            <select class="form-select" id="geoRegion">
+                                <option value="US">United States</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="CA">Canada</option>
+                                <option value="AU">Australia</option>
+                                <option value="DE">Germany</option>
+                                <option value="FR">France</option>
+                                <option value="JP">Japan</option>
+                                <option value="BR">Brazil</option>
+                                <option value="IN">India</option>
+                                <option value="MX">Mexico</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sourceUrl" class="form-label">Source URL</label>
+                            <input type="url" class="form-control" id="sourceUrl" value="https://trends.google.com/tv/?rows=5&cols=5&geo=US" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" id="startProcess">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                                    <polygon points="5,3 19,12 5,21"></polygon>
+                                </svg>
+                                Start Processing
+                            </button>
+                            <button class="btn btn-danger ms-2" id="stopProcess" style="display: none;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                                    <rect x="6" y="6" width="12" height="12"></rect>
+                                </svg>
+                                Stop Process
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <h2 class="panel-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-left-right-ellipsis-icon lucide-chevrons-left-right-ellipsis"><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="m17 7 5 5-5 5"/><path d="m7 7-5 5 5 5"/><path d="M8 12h.01"/></svg>
+                                Process Log
+                            </h2>
+                            <div class="log-area" id="logArea">
+                                <div class="log-entry info">🚀 Nova Clip ready to process</div>
+                                <div class="log-entry">📊 Select region and click 'Start Processing' to begin</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Stages -->
+                <div class="col-lg-6">
+                    <div class="stage-panel">
+                        <h2 class="panel-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22,4 12,14.01 9,11.01"></polyline>
+                            </svg>
+                            Processing Stages
+                        </h2>
+
+                        <!-- Stage 1: Scraping -->
+                        <div class="stage-block" id="stage1">
+                            <div class="stage-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                </svg>
+                                Stage 1: Scraping
+                            </div>
+                            <div class="stage-description">
+                                Extract trending names from Google Trends TV and enrich with search data
+                            </div>
+                            <div class="stage-status">
+                                <div class="status-icon pending" id="stage1-icon"></div>
+                                <span id="stage1-status">Pending</span>
+                            </div>
+                            <div class="stage-details" id="stage1-details" style="display: none;">
+                                <small class="text-muted"></small>
+                            </div>
+                        </div>
+
+                        <!-- Stage 2: Script Generation -->
+                        <div class="stage-block" id="stage2">
+                            <div class="stage-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14,2 14,8 20,8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10,9 9,9 8,9"></polyline>
+                                </svg>
+                                Stage 2: Script Generation
+                            </div>
+                            <div class="stage-description">
+                                Generate AI-powered video scripts for trending personalities
+                            </div>
+                            <div class="stage-status">
+                                <div class="status-icon pending" id="stage2-icon"></div>
+                                <span id="stage2-status">Pending</span>
+                            </div>
+                            <div class="stage-details" id="stage2-details" style="display: none;">
+                                <small class="text-muted"></small>
+                            </div>
+                        </div>
+
+                        <!-- Stage 3: Image Generation -->
+                        <div class="stage-block" id="stage3">
+                            <div class="stage-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21,15 16,10 5,21"></polyline>
+                                </svg>
+                                Stage 3: Image Generation
+                            </div>
+                            <div class="stage-description">
+                                Collect and organize relevant images for video production
+                            </div>
+                            <div class="stage-status">
+                                <div class="status-icon pending" id="stage3-icon"></div>
+                                <span id="stage3-status">Pending</span>
+                            </div>
+                            <div class="stage-details" id="stage3-details" style="display: none;">
+                                <small class="text-muted"></small>
+                            </div>
+                        </div>
+                        
+                        <!--<div class="progress">
+                            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                        </div> -->
+                        <div class="progress-bar-wrapper">
+                            <div class="progress">
+                              <div class="progress-bar" id="progressBar">0%</div>
+                            </div>
+                          </div>
+                    </div>
+                    <!-- AI Tips Block -->
+                    <div class="stage-block" id="aiTips">
+                        <div class="tip visible" id="tipBox">
+                          <div class="stage-title">AI News:</div>
+                          <div class="tip-content" id="tipText">Loading tips...</div>
+                          <a id="tipLink" href="#" target="_blank" rel="noopener noreferrer">Read more</a>
+                        </div>
+                      </div>
+                      
+                      <style>
+                        #aiTips {
+                          font-family: sans-serif;
+                          font-size: 12px;
+                          color: #333;
+                          background: #4e0f6330;
+                          border-radius: 12px;
+                          padding: 10px 14px;
+                          margin-top: 16px;
+                          height: 110px;
+                          /*width: 510px;*/
+                          position: relative;
+                          box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+                          overflow: hidden;
+                        }
+                      
+                        .tip {
+                          width: 100%;
+                          height: 100%;
+                          display: flex;
+                          flex-direction: column;
+                          opacity: 0;
+                          transition: opacity 1s ease-in-out;
+                        }
+                      
+                        .tip.visible {
+                          opacity: 1;
+                        }
+                      
+                        .tip-header {
+                          font-weight: bold;
+                          margin-bottom: 2px;
+                          font-size: 13px;
+                        }
+                      
+                        .tip-content {
+                          flex-grow: 1;
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                          display: -webkit-box;
+                          -webkit-line-clamp: 2;
+                          -webkit-box-orient: vertical;
+                          line-height: 1.2;
+                          padding-right: 60px; /* for space from link */
+                          /*margin-top: 10px;*/
+                          font-size: larger;
+                        }
+                      
+                        #tipLink {
+                          position: absolute;
+                          bottom: 6px;
+                          right: 10px;
+                          color: #1a73e8;
+                          text-decoration: none;
+                          font-size: 13px;
+                        }
+                      
+                        #tipLink:hover {
+                          text-decoration: underline;
+                        }
+                      </style>
+                      
+                      <script>
+                        const feedUrls = [
+                          'https://venturebeat.com/category/ai/feed/',
+                          'https://thenextweb.com/feed/tag/artificial-intelligence/',
+                          'https://openai.com/blog/rss/',
+                          'https://ai.googleblog.com/feeds/posts/default',
+                          'https://www.aitrends.com/feed/',
+                          'https://www.technologyreview.com/feed/'
+                        ];
+                      
+                        const apiBase = 'https://api.rss2json.com/v1/api.json?rss_url=';
+                        const tipBox = document.getElementById('tipBox');
+                        const tipText = document.getElementById('tipText');
+                        const tipLink = document.getElementById('tipLink');
+                      
+                        let tips = [];
+                        let currentIndex = 0;
+                      
+                        async function fetchFeed(url) {
+                          try {
+                            const res = await fetch(apiBase + encodeURIComponent(url));
+                            const data = await res.json();
+                            return data.items || [];
+                          } catch (err) {
+                            console.warn('Failed to fetch:', url, err);
+                            return [];
+                          }
+                        }
+                      
+                        async function loadTips() {
+                          const allFeeds = await Promise.all(feedUrls.map(fetchFeed));
+                          tips = allFeeds.flat().filter(item => item.title && item.link);
+                          if (!tips.length) {
+                            tipText.textContent = 'No tips available.';
+                            tipLink.style.display = 'none';
+                            return;
+                          }
+                      
+                          tipBox.classList.add('visible');
+                          updateTip();
+                          setInterval(() => {
+                            tipBox.classList.remove('visible');
+                            setTimeout(() => {
+                              currentIndex = (currentIndex + 1) % tips.length;
+                              updateTip();
+                              tipBox.classList.add('visible');
+                            }, 1000);
+                          }, 5000);
+                        }
+                      
+                        function updateTip() {
+                          const tip = tips[currentIndex];
+                          tipText.textContent = tip.title;
+                          tipLink.href = tip.link;
+                        }
+                      
+                        document.addEventListener('DOMContentLoaded', loadTips);
+                      </script>
+                </div>
+            
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Made with <span class="heart">♥</span> by Nova Clip Team</p>
+        </div>
+        <!-- Connection Status Indicator -->
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-dot disconnected" id="statusDot"></span>
+            <span class="status-text" id="statusText">Disconnected</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        // Global state management
+        const appState = {
+            socket: null,
+            isConnected: false,
+            isProcessing: false,
+            currentStage: 0,
+            socketInitialized: false,
+            stageStates: {
+                1: { status: 'pending', details: '' },
+                2: { status: 'pending', details: '' },
+                3: { status: 'pending', details: '' }
+            }
+        };
+
+        // DOM Elements
+        const elements = {
+            geoRegion: document.getElementById('geoRegion'),
+            sourceUrl: document.getElementById('sourceUrl'),
+            startProcessBtn: document.getElementById('startProcess'),
+            stopProcessBtn: document.getElementById('stopProcess'),
+            logArea: document.getElementById('logArea'),
+            progressBar: document.getElementById('progressBar'),
+            connectionStatus: document.getElementById('connectionStatus'),
+            statusDot: document.getElementById('statusDot'),
+            statusText: document.getElementById('statusText')
+        };
+
+        // Utility Functions
+        function addLogEntry(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            elements.logArea.appendChild(logEntry);
+            elements.logArea.scrollTop = elements.logArea.scrollHeight;
+            
+            // Debug log
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateConnectionStatus(connected) {
+            appState.isConnected = connected;
+            elements.statusDot.className = `status-dot ${connected ? 'connected' : 'disconnected'}`;
+            elements.statusText.textContent = connected ? 'Server: Connected' : 'Server: Disconnected';
+            elements.connectionStatus.className = `connection-status ${connected ? 'connected' : 'disconnected'}`;
+        }
+
+        /*function updateProgress(percentage) {
+            const clampedPercentage = Math.max(0, Math.min(100, percentage));
+            elements.progressBar.style.width = `${clampedPercentage}%`;
+            console.log(`Progress updated: ${clampedPercentage}%`);
+        }*/
+        function updateProgress(percentage) {
+            const clampedPercentage = Math.max(0, Math.min(100, percentage));
+            const progressBar = elements.progressBar;
+        
+            if (progressBar) {
+                progressBar.style.width = `${clampedPercentage}%`;
+                progressBar.textContent = `${clampedPercentage}%`; // Add this line to show percentage text
+                console.log(`Progress updated: ${clampedPercentage}%`);
+            } else {
+                console.warn("Progress bar element not found.");
+            }
+        }
+        
+
+        function updateStage(stageNumber, status, details = '') {
+            console.log(`Updating stage ${stageNumber} to ${status}:`, details);
+            
+            // Validate inputs
+            if (!stageNumber || stageNumber < 1 || stageNumber > 3) {
+                console.error(`Invalid stage number: ${stageNumber}`);
+                return;
+            }
+
+            if (!status) {
+                console.error(`Invalid status for stage ${stageNumber}: ${status}`);
+                return;
+            }
+
+            // Get DOM elements
+            const stageElement = document.getElementById(`stage${stageNumber}`);
+            const stageIcon = document.getElementById(`stage${stageNumber}-icon`);
+            const stageStatus = document.getElementById(`stage${stageNumber}-status`);
+            const stageDetails = document.getElementById(`stage${stageNumber}-details`);
+
+            if (!stageElement || !stageIcon || !stageStatus) {
+                console.error(`Stage ${stageNumber} elements not found`);
+                return;
+            }
+
+            // Update state
+            appState.stageStates[stageNumber] = { status, details };
+
+            // Reset all classes
+            stageElement.className = 'stage-block';
+            stageIcon.className = 'status-icon';
+
+            // Add new status classes
+            stageElement.classList.add(status);
+            stageIcon.classList.add(status);
+
+            // Update status text
+            const statusTexts = {
+                'pending': 'Pending',
+                'processing': 'In Progress...',
+                'completed': 'Completed',
+                'error': 'Error'
+            };
+
+            let displayText = statusTexts[status] || status;
+            stageStatus.textContent = displayText;
+
+            // Update details if provided
+            if (stageDetails) {
+                if (details && details.trim()) {
+                    stageDetails.style.display = 'block';
+                    stageDetails.querySelector('small').textContent = details;
+                } else {
+                    stageDetails.style.display = 'none';
+                }
+            }
+
+            // Update current stage tracking
+            if (status === 'processing') {
+                appState.currentStage = stageNumber;
+            } else if (status === 'completed' && appState.currentStage === stageNumber) {
+                appState.currentStage = 0; // Reset when stage completes
+            }
+            
+            console.log(`Stage ${stageNumber} updated successfully to: ${displayText}${details ? ' - ' + details : ''}`);
+            
+            // Add visual feedback for stage transitions
+            stageElement.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                stageElement.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function resetAllStages() {
+            console.log('Resetting all stages to pending');
+            for (let i = 1; i <= 3; i++) {
+                updateStage(i, 'pending');
+            }
+            appState.currentStage = 0;
+        }
+
+        function resetProcessUI() {
+            console.log('Resetting process UI');
+            appState.isProcessing = false;
+            elements.startProcessBtn.style.display = 'inline-block';
+            elements.stopProcessBtn.style.display = 'none';
+            elements.stopProcessBtn.disabled = false;
+            elements.stopProcessBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                    <rect x="6" y="6" width="12" height="12"></rect>
+                </svg>
+                Stop Process
+            `;
+        }
+
+        // Socket.IO Management
+        function initializeSocket() {
+            try {
+                console.log('Initializing Socket.IO connection...');
+                
+                // Clean up existing connection
+                if (appState.socket) {
+                    appState.socket.disconnect();
+                    appState.socket.removeAllListeners();
+                    appState.socket = null;
+                }
+
+                // Create new connection with better configuration
+                appState.socket = io({
+                    reconnection: true,
+                    reconnectionAttempts: 10,
+                    reconnectionDelay: 1000,
+                    reconnectionDelayMax: 5000,
+                    timeout: 20000,
+                    transports: ['websocket', 'polling']
+                });
+
+                setupSocketEvents();
+                
+            } catch (error) {
+                console.error('Socket initialization error:', error);
+                addLogEntry('Failed to initialize connection', 'error');
+            }
+        }
+
+        function setupSocketEvents() {
+            if (!appState.socket) return;
+
+            // Connection events
+            appState.socket.on('connect', () => {
+                console.log('Socket connected successfully');
+                appState.socketInitialized = true;
+                updateConnectionStatus(true);
+                addLogEntry('Connected to server', 'success');
+            });
+
+            appState.socket.on('disconnect', (reason) => {
+                console.log('Socket disconnected:', reason);
+                updateConnectionStatus(false);
+                addLogEntry(`Disconnected: ${reason}`, 'warning');
+                appState.socketInitialized = false;
+            });
+
+            appState.socket.on('connect_error', (error) => {
+                console.error('Connection error:', error);
+                addLogEntry(`Connection error: ${error.message}`, 'error');
+            });
+
+            // Enhanced stage update handler
+            appState.socket.on('stage_update', (data) => {
+                console.log('Received stage_update:', data);
+                
+                // Validate the data structure
+                if (!data || typeof data !== 'object') {
+                    console.error('Invalid stage_update data structure:', data);
+                    return;
+                }
+
+                const { stage, status, details } = data;
+
+                // Validate required fields
+                if (typeof stage !== 'number' || !status) {
+                    console.error('Invalid stage_update data - missing required fields:', data);
+                    return;
+                }
+
+                // Validate stage number
+                if (stage < 1 || stage > 3) {
+                    console.error('Invalid stage number in stage_update:', stage);
+                    return;
+                }
+
+                // Validate status
+                const validStatuses = ['pending', 'processing', 'completed', 'error'];
+                if (!validStatuses.includes(status)) {
+                    console.error('Invalid status in stage_update:', status);
+                    return;
+                }
+
+                // Update the stage
+                updateStage(stage, status, details || '');
+                
+                // Add log entry for stage update
+                const logMessage = `Stage ${stage}: ${status}${details ? ' - ' + details : ''}`;
+                addLogEntry(logMessage, status === 'error' ? 'error' : 'info');
+            });
+
+            appState.socket.on('progress', (data) => {
+                console.log('Received progress:', data);
+                if (data && typeof data.percentage === 'number') {
+                    updateProgress(data.percentage);
+                } else {
+                    console.error('Invalid progress data:', data);
+                }
+            });
+
+            appState.socket.on('log', (data) => {
+                console.log('Received log:', data);
+                if (data && data.message) {
+                    addLogEntry(data.message, data.type || 'info');
+                } else {
+                    console.error('Invalid log data:', data);
+                }
+            });
+
+            appState.socket.on('process_complete', (data) => {
+                console.log('Process completed:', data);
+                addLogEntry('🎉 All stages completed successfully!', 'success');
+                updateProgress(100);
+                
+                // Mark all stages as completed if not already
+                for (let i = 1; i <= 3; i++) {
+                    if (appState.stageStates[i].status !== 'completed') {
+                        updateStage(i, 'completed');
+                    }
+                }
+                
+                resetProcessUI();
+            });
+
+            appState.socket.on('process_error', (data) => {
+                console.log('Process error:', data);
+                const errorMsg = data?.error || 'Unknown error occurred';
+                addLogEntry(`❌ Error: ${errorMsg}`, 'error');
+                
+                // Mark current stage as error
+                if (appState.currentStage > 0) {
+                    updateStage(appState.currentStage, 'error', errorMsg);
+                }
+                
+                resetProcessUI();
+            });
+
+            appState.socket.on('process_stopped', (data) => {
+                console.log('Process stopped:', data);
+                const message = data?.message || 'Process stopped by user';
+                addLogEntry(`⛔ ${message}`, 'warning');
+                
+                // Mark current stage as error/stopped
+                if (appState.currentStage > 0) {
+                    updateStage(appState.currentStage, 'error', 'Stopped by user');
+                }
+                
+                resetProcessUI();
+            });
+
+            // Test event for debugging
+            appState.socket.on('test_event', (data) => {
+                console.log('Test event received:', data);
+                addLogEntry('Test event received', 'info');
+            });
+        }
+
+        // Process Control
+        async function startProcessing() {
+            if (appState.isProcessing) {
+                addLogEntry('Process already running', 'warning');
+                return;
+            }
+            
+            if (!appState.socketInitialized) {
+                addLogEntry('Connection not ready. Please wait...', 'warning');
+                return;
+            }
+            
+            console.log('Starting processing...');
+            appState.isProcessing = true;
+            elements.startProcessBtn.style.display = 'none';
+            elements.stopProcessBtn.style.display = 'inline-block';
+            
+            // Reset UI state
+            resetAllStages();
+            updateProgress(0);
+            
+            try {
+                const requestData = {
+                    geo_region: elements.geoRegion.value,
+                    source_url: elements.sourceUrl.value
+                };
+                
+                console.log('Sending start request:', requestData);
+                
+                const response = await fetch('/start_process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                console.log('Start response:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.error || data.message || 'Start request failed');
+                }
+                
+                addLogEntry(data.message || 'Processing started successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Start error:', error);
+                addLogEntry(`❌ Start failed: ${error.message}`, 'error');
+                resetProcessUI();
+            }
+        }
+
+        async function stopProcessing() {
+            if (!appState.isProcessing) {
+                addLogEntry('No process running', 'warning');
+                return;
+            }
+            
+            console.log('Stopping processing...');
+            
+            try {
+                // Show loading state
+                elements.stopProcessBtn.disabled = true;
+                elements.stopProcessBtn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Stopping...
+                `;
+                
+                const response = await fetch('/stop_process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                console.log('Stop response:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.error || data.message || 'Stop request failed');
+                }
+                
+                addLogEntry(data.message || 'Stop request sent', 'info');
+                
+            } catch (error) {
+                console.error('Stop error:', error);
+                addLogEntry(`❌ Stop failed: ${error.message}`, 'error');
+                resetProcessUI();
+            }
+        }
+
+        // Navigation Functions
+        function navigateToResults(event) {
+            event.preventDefault();
+            window.location.href = '/get_results';
+        }
+        
+        function handleLogout(event) {
+            event.preventDefault();
+            
+            // Clean disconnect
+            if (appState.socket) {
+                appState.socket.disconnect();
+            }
+            
+            // Clear storage
+            sessionStorage.clear();
+            localStorage.clear();
+            
+            // Navigate to logout
+            window.location.href = '/logout';
+        }
+
+        // Debug functions for testing
+        window.testStageUpdate = (stage, status, details) => {
+            console.log(`Testing stage update: ${stage}, ${status}, ${details}`);
+            updateStage(stage, status, details);
+        };
+
+        window.testAllStages = () => {
+            console.log('Testing all stage transitions...');
+            setTimeout(() => updateStage(1, 'processing', 'Starting scraping process'), 1000);
+            setTimeout(() => updateStage(1, 'completed', 'Found 25 trending names'), 3000);
+            setTimeout(() => updateStage(2, 'processing', 'Generating scripts'), 4000);
+            setTimeout(() => updateStage(2, 'completed', 'Generated 15 scripts'), 6000);
+            setTimeout(() => updateStage(3, 'processing', 'Collecting images'), 7000);
+            setTimeout(() => updateStage(3, 'completed', 'Downloaded 300 images'), 9000);
+        };
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing application...');
+            
+            // Initialize socket connection
+            initializeSocket();
+            
+            // Event listeners
+            elements.startProcessBtn.addEventListener('click', startProcessing);
+            elements.stopProcessBtn.addEventListener('click', stopProcessing);
+            
+            // Update source URL when region changes
+            elements.geoRegion.addEventListener('change', () => {
+                elements.sourceUrl.value = `https://trends.google.com/tv/?rows=5&cols=5&geo=${elements.geoRegion.value}`;
+            });
+            
+            console.log('Application initialized successfully');
+            
+            // Test the stage update system (remove in production)
+            console.log('Stage update functions available: testStageUpdate(stage, status, details) and testAllStages()');
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (appState.socket) {
+                appState.socket.disconnect();
+            }
+        });
+    </script>
+</body>
+</html>
